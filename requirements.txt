@@ -1,0 +1,4 @@
+requests
+scraperapi-sdk
+beautifulsoup4
+setuptools
