@@ -1,0 +1,1 @@
+from scrapetools.sync.scrapetools import fetch
