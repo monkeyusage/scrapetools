@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="scrapetools",
-    version="0.2.0",
+    version="0.2.1",
     description="A library for scraping more easily",
     url="https://github.com/monkeyusage/scrapetools",
     author="monkeyusage",
