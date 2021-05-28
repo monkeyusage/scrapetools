@@ -18,7 +18,7 @@ async def fetch(url: str, **kwargs: int) -> BeautifulSoup | None:
     """
     sleeping_t = validate_params(url, **kwargs)
     logging.debug(f"Sleeping for {sleeping_t} seconds")
-    sleep(sleeping_t)
+    await sleep(sleeping_t)
 
     link = f"http://api.scraperapi.com/?api_key={API_KEY}&url={url}"
 
