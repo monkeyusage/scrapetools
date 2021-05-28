@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import logging
-
 from time import sleep
+
 from bs4 import BeautifulSoup
 from scraper_api import ScraperAPIClient
 

@@ -1,4 +1,5 @@
 requests
 scraperapi-sdk
 beautifulsoup4
+aiohttp
 setuptools
