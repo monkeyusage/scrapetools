@@ -10,7 +10,7 @@ from scrapetools.credentials import API_KEY
 from scrapetools.validation import validate_params
 
 
-async def fetch(url: str, **kwargs: int) -> BeautifulSoup | None:
+async def fetch(url: str, use_proxy:bool=True, **kwargs: int) -> BeautifulSoup | None:
     """
     uses scraperapi-sdk to send async requests to the given url
     returns Coroutine[None, None,BeautifulSoup|None] if failure happened
@@ -20,7 +20,7 @@ async def fetch(url: str, **kwargs: int) -> BeautifulSoup | None:
     logging.debug(f"Sleeping for {sleeping_t} seconds")
     await sleep(sleeping_t)
 
-    link = f"http://api.scraperapi.com/?api_key={API_KEY}&url={url}"
+    link = f"http://api.scraperapi.com/?api_key={API_KEY}&url={url}" if use_proxy else url
 
     async with aiohttp.ClientSession() as session:
         async with session.get(link) as response:

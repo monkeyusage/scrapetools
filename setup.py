@@ -3,12 +3,12 @@ from setuptools import setup
 setup(
     name="scrapetools",
     version="0.2.1",
-    description="A library for scraping more easily",
+    description="A library for easy scraping",
     url="https://github.com/monkeyusage/scrapetools",
     author="monkeyusage",
     author_email="monkeyusage@gmail.com",
     license="MIT",
-    packages=["scrapetools"],
+    packages=["scrapetools", "scrapetools.sync"],
     install_requires=[
         "requests",
         "beautifulsoup4",

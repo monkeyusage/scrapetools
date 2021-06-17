@@ -10,7 +10,7 @@ def validate_url(url: str) -> None:
 
 def validate_sleep(**kwargs: int) -> int:
     """
-    validatates kwargs entered when fetching for online data
+    validates kwargs entered when fetching for online data
     the current setup accepts the following parameters:
         - min_t for min time sleeping
         - max_t for max time sleeping
