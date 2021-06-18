@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from time import sleep
 
 from bs4 import BeautifulSoup
@@ -20,15 +19,15 @@ def fetch(
     you can configure sleeping time
     """
     sleeping_t = validate_params(url, **kwargs)
-    logging.debug(f"Sleeping for {sleeping_t} seconds")
+    print(f"Sleeping for {sleeping_t} seconds")
     sleep(sleeping_t)
     response = client.get(url) if use_proxy else requests.get(url)
     if not response.ok:
-        logging.error(
+        print(
             f"Failed to fetch for url: {url} with error code: {response.status_code}"
         )
         return None
-    logging.info(f"Fetched for url {url} successfully!")
+    print(f"Fetched for url {url} successfully!")
     soup = BeautifulSoup(
         str(response.content, encoding="utf8", errors="ignore"), "html.parser"
     )

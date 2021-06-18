@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from asyncio import sleep
 
 import aiohttp
@@ -17,7 +16,7 @@ async def fetch(url: str, use_proxy:bool=True, **kwargs: int) -> BeautifulSoup |
     you can configure sleeping time
     """
     sleeping_t = validate_params(url, **kwargs)
-    logging.debug(f"Sleeping for {sleeping_t} seconds")
+    print(f"Sleeping for {sleeping_t} seconds")
     await sleep(sleeping_t)
 
     link = f"http://api.scraperapi.com/?api_key={API_KEY}&url={url}" if use_proxy else url
@@ -25,11 +24,11 @@ async def fetch(url: str, use_proxy:bool=True, **kwargs: int) -> BeautifulSoup |
     async with aiohttp.ClientSession() as session:
         async with session.get(link) as response:
             if response.status != 200:
-                logging.error(
+                print(
                     f"Failed to fetch for url: {url} with error code: {response.status}"
                 )
                 return None
             html = await response.text()
-    logging.info(f"Fetched for url {url} successfully!")
+    print(f"Fetched for url {url} successfully!")
     soup = BeautifulSoup(html, "html.parser")
     return soup

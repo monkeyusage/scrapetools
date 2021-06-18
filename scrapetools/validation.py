@@ -1,5 +1,4 @@
 from __future__ import annotations
-import warnings
 from random import randint
 
 def validate_url(url: str) -> None:
