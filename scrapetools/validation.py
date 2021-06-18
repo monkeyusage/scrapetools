@@ -21,10 +21,10 @@ def validate_kwargs(**kwargs: int) -> int:
         "max_t",
         "sleep",
     ])
-    assert all(map(lambda kw: kw in ALLOWED_KWARGS, kwargs.items())), \
+    assert all(map(lambda kw: kw in ALLOWED_KWARGS, kwargs.keys())), \
         f"Unauthorized key word argument used, use one of the following: {ALLOWED_KWARGS}"
 
-    assert all(map(lambda _, v: isinstance(int, v), kwargs.items())), \
+    assert all(map(lambda v: isinstance(int, v), kwargs.values())), \
         "All keyword values should be integers"
 
 def get_sleeping_time(**kwargs:int) -> int:
