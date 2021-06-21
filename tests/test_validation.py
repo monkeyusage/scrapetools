@@ -1,9 +1,6 @@
-from scrapetools.validation import (
-    validate_url,
-    validate_kwargs,
-    get_sleeping_time,
-)
 import pytest
+
+from scrapetools.validation import get_sleeping_time, validate_kwargs, validate_url
 
 
 def test_validate_url() -> None:

@@ -14,7 +14,7 @@ async def fetch(
     url: str, use_proxy: bool = True, **kwargs: int
 ) -> BeautifulSoup | None:
     """
-    uses scraperapi-sdk to send async requests to the given url
+    sends async requests to the given url
     returns Coroutine[None, None,BeautifulSoup|None] if failure happened
     you can configure sleeping time
     """
