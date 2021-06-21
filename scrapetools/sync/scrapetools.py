@@ -1,5 +1,9 @@
+"""
+core module of the library, implements the sync version of the library
+"""
 from __future__ import annotations
 
+import asyncio
 from time import sleep
 
 import requests
@@ -7,12 +11,10 @@ from bs4 import BeautifulSoup
 from scraper_api import ScraperAPIClient
 
 from scrapetools.credentials import API_KEY
+from scrapetools.scrapetools import fetch_many as async_fetch_many
 from scrapetools.validation import validate_params
 
-if API_KEY is not None:
-    CLIENT = ScraperAPIClient(API_KEY)
-else:
-    CLIENT = None
+CLIENT = ScraperAPIClient(API_KEY) if API_KEY is not None else None
 
 
 def fetch(
@@ -45,11 +47,24 @@ def fetch(
 def fetch_many(
     urls: list[str],
     use_proxy: bool = True,
+    verbose: bool = False,
     client: ScraperAPIClient | None = CLIENT,
+    sequential: bool = True,
+    workers: int = 20,
     **kwargs: int,
 ) -> list[BeautifulSoup | None]:
-    responses = []
-    for url in urls:
-        response = fetch(url, use_proxy, client, **kwargs)
-        responses.append(response)
-    return responses
+    """
+    fetches url by url using the sync function
+    or calls the equivalent fetch_many function in a blocking manner
+    """
+    if sequential:
+        responses = []
+        for url in urls:
+            response = fetch(url, use_proxy, client, **kwargs)
+            responses.append(response)
+        return responses
+    return asyncio.run(
+        async_fetch_many(
+            urls, use_proxy=use_proxy, verbose=verbose, workers=workers, **kwargs
+        )
+    )

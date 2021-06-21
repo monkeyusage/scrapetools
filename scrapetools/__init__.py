@@ -1,5 +1,7 @@
 """
-scrapetools is a webscraping tool that uses scraper_api and bs4 to make your webscrapping experience easier
+scrapetools is a webscraping tool that uses:
+    scraper_api and bs4
+to make your webscrapping experience easier
 """
 from __future__ import annotations
 

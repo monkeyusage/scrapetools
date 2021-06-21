@@ -1,3 +1,6 @@
+"""
+core library module, implements default async fetch functions
+"""
 from __future__ import annotations
 
 import asyncio
@@ -11,7 +14,7 @@ from scrapetools.validation import validate_params
 
 
 async def fetch(
-    url: str, use_proxy: bool = True, **kwargs: int
+    url: str, use_proxy: bool = True, verbose: bool = False, **kwargs: int
 ) -> BeautifulSoup | None:
     """
     sends async requests to the given url
@@ -19,28 +22,37 @@ async def fetch(
     you can configure sleeping time
     """
     sleeping_t = validate_params(url, use_proxy, **kwargs)
-    print(f"Sleeping for {sleeping_t} seconds")
+    if verbose:
+        print(f"Sleeping for {sleeping_t} seconds")
     await sleep(sleeping_t)
 
     link = (
-        f"http://api.scraperapi.com/?api_key={API_KEY}&url={url}" if use_proxy else url
+        f"http://api.scraperapi.com/?api_key={API_KEY}&url={url}"
+        if (use_proxy and API_KEY is not None)
+        else url
     )
 
     async with aiohttp.ClientSession() as session:
         async with session.get(link) as response:
             if response.status != 200:
-                print(
-                    f"Failed to fetch for url: {url} with error code: {response.status}"
-                )
+                if verbose:
+                    print(
+                        f"Failed to fetch for url: {url} with error code: {response.status}"
+                    )
                 return None
             html = await response.text()
-    print(f"Fetched for url {url} successfully!")
+    if verbose:
+        print(f"Fetched for url {url} successfully!")
     soup = BeautifulSoup(html, "html.parser")
     return soup
 
 
 async def fetch_many(
-    urls: list[str], use_proxy: bool = True, workers: int = 20, **kwargs: int
+    urls: list[str],
+    use_proxy: bool = True,
+    verbose: bool = False,
+    workers: int = 20,
+    **kwargs: int,
 ) -> list[BeautifulSoup | None]:
     """
     Fetches many urls using a given amount of workers and a queue to pull urls from
@@ -60,7 +72,7 @@ async def fetch_many(
                 index, url = queue.get_nowait()
             except asyncio.QueueEmpty:
                 break
-            response = await fetch(url, use_proxy, **kwargs)
+            response = await fetch(url, use_proxy=use_proxy, verbose=verbose, **kwargs)
             if response is not None:
                 responses[index] = response
             queue.task_done()

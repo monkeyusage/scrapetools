@@ -1,3 +1,6 @@
+"""
+validation module, helps arguments for both async and sync versions of the library
+"""
 from __future__ import annotations
 
 from random import randint
