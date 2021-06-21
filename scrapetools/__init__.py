@@ -5,7 +5,7 @@ to make your webscrapping experience easier
 """
 from __future__ import annotations
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 __author__ = "monkeyusage"
 
 from scrapetools.scrapetools import fetch, fetch_many
