@@ -29,7 +29,9 @@ def fetch(
     sleeping_t = validate_params(url, use_proxy, **kwargs)
     print(f"Sleeping for {sleeping_t} seconds")
     sleep(sleeping_t)
-    response = client.get(url) if (use_proxy and client is not None)  else requests.get(url)
+    response = (
+        client.get(url) if (use_proxy and client is not None) else requests.get(url)
+    )
     if not response.ok:
         print(f"Failed to fetch for url: {url} with error code: {response.status_code}")
         return None
