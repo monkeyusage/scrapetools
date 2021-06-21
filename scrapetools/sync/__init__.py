@@ -1,1 +1,1 @@
-from scrapetools.sync.scrapetools import fetch
+from scrapetools.sync.scrapetools import fetch, fetch_many

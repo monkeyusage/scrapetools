@@ -9,12 +9,7 @@ setup(
     author_email="monkeyusage@gmail.com",
     license="MIT",
     packages=["scrapetools", "scrapetools.sync"],
-    install_requires=[
-        "requests",
-        "beautifulsoup4",
-        "scraperapi-sdk",
-        "aiohttp"
-    ],
+    install_requires=["requests", "beautifulsoup4", "scraperapi-sdk", "aiohttp"],
     classifiers=[
         "Development Status :: 1 - Planning",
         "Intended Audience :: Science/Research",
