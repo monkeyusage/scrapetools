@@ -64,7 +64,7 @@ async def fetch_many(
 
     async def worker(queue: asyncio.Queue[tuple[int, str]]) -> None:
         """
-        Consumes a urls queue until it's empty, filling the responses list on evert iteration
+        Consumes a urls queue until it's empty, filling the responses list on every iteration
         We do not worry about the list 'responses' ownership since asyncio is single threaded
         """
         while True:
