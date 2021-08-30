@@ -8,6 +8,7 @@ from time import sleep
 
 import requests
 from bs4 import BeautifulSoup
+from requests.adapters import Response
 from scraper_api import ScraperAPIClient
 
 from scrapetools.credentials import API_KEY
@@ -31,7 +32,7 @@ def fetch(
     sleeping_t = validate_params(url, use_proxy, **kwargs)
     print(f"Sleeping for {sleeping_t} seconds")
     sleep(sleeping_t)
-    response = (
+    response : Response = (
         client.get(url) if (use_proxy and client is not None) else requests.get(url)
     )
     if not response.ok:
@@ -58,7 +59,7 @@ def fetch_many(
     or calls the equivalent fetch_many function in a blocking manner
     """
     if sequential:
-        responses = []
+        responses : list[BeautifulSoup | None] = []
         for url in urls:
             response = fetch(url, use_proxy, client, **kwargs)
             responses.append(response)
