@@ -4,33 +4,23 @@ core library module, implements default async fetch functions
 from __future__ import annotations
 
 import asyncio
-from asyncio import sleep
+from typing import Any
 
 import aiohttp
 from bs4 import BeautifulSoup
 
-from scrapetools.credentials import API_KEY
-from scrapetools.validation import validate_params
+from scrapetools import API_KEY
 
 
 async def fetch(
-    url: str, use_proxy: bool = True, verbose: bool = False, **kwargs: int
+    url: str, use_proxy: bool = True, verbose: bool = False, json:bool = False, **kwargs: Any
 ) -> BeautifulSoup | None:
     """
     sends async requests to the given url
-    returns Coroutine[None, None,BeautifulSoup|None] if failure happened
-    you can configure sleeping time
+    returns Coroutine[None, None,BeautifulSoup|None]
     """
-    sleeping_t = validate_params(url, use_proxy, **kwargs)
-    if verbose:
-        print(f"Sleeping for {sleeping_t} seconds")
-    await sleep(sleeping_t)
 
-    link = (
-        f"http://api.scraperapi.com/?api_key={API_KEY}&url={url}"
-        if (use_proxy and API_KEY is not None)
-        else url
-    )
+    link = f"http://api.scraperapi.com/?api_key={API_KEY}&url={url}"
 
     async with aiohttp.ClientSession() as session:
         async with session.get(link) as response:
@@ -40,11 +30,13 @@ async def fetch(
                         f"Failed to fetch for url: {url} with error code: {response.status}"
                     )
                 return None
+            if verbose:
+                print(f"Fetched for url {url} successfully!")
+            if json:
+                data = await response.json()
+                return data
             html = await response.text()
-    if verbose:
-        print(f"Fetched for url {url} successfully!")
-    soup = BeautifulSoup(html, "html.parser")
-    return soup
+            return BeautifulSoup(html, "html.parser")
 
 
 async def fetch_many(
@@ -68,10 +60,7 @@ async def fetch_many(
         We do not worry about the list 'responses' ownership since asyncio is single threaded
         """
         while True:
-            try:
-                index, url = queue.get_nowait()
-            except asyncio.QueueEmpty:
-                break
+            index, url = await queue.get_nowait()
             response = await fetch(url, use_proxy=use_proxy, verbose=verbose, **kwargs)
             if response is not None:
                 responses[index] = response
@@ -79,6 +68,8 @@ async def fetch_many(
 
     tasks = [asyncio.create_task(worker(urls_queue)) for _ in range(workers)]
     await urls_queue.join()
+    for task in tasks:
+        task.cancel()
     await asyncio.gather(*tasks)
 
     return responses

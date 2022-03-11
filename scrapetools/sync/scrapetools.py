@@ -11,9 +11,8 @@ from bs4 import BeautifulSoup
 from requests.adapters import Response
 from scraper_api import ScraperAPIClient
 
-from scrapetools.credentials import API_KEY
+from scrapetools import API_KEY
 from scrapetools.scrapetools import fetch_many as async_fetch_many
-from scrapetools.validation import validate_params
 
 CLIENT = ScraperAPIClient(API_KEY) if API_KEY is not None else None
 
@@ -29,10 +28,7 @@ def fetch(
     returns BeautifulSoup object or None if failure happened
     you can configure sleeping time
     """
-    sleeping_t = validate_params(url, use_proxy, **kwargs)
-    print(f"Sleeping for {sleeping_t} seconds")
-    sleep(sleeping_t)
-    response : Response = (
+    response: Response = (
         client.get(url) if (use_proxy and client is not None) else requests.get(url)
     )
     if not response.ok:
@@ -50,8 +46,8 @@ def fetch_many(
     use_proxy: bool = True,
     verbose: bool = False,
     client: ScraperAPIClient | None = CLIENT,
-    sequential: bool = True,
-    workers: int = 20,
+    sequential: bool = False,
+    workers: int = 25,
     **kwargs: int,
 ) -> list[BeautifulSoup | None]:
     """
@@ -59,7 +55,7 @@ def fetch_many(
     or calls the equivalent fetch_many function in a blocking manner
     """
     if sequential:
-        responses : list[BeautifulSoup | None] = []
+        responses: list[BeautifulSoup | None] = []
         for url in urls:
             response = fetch(url, use_proxy, client, **kwargs)
             responses.append(response)
