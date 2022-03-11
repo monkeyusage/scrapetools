@@ -4,16 +4,21 @@ core library module, implements default async fetch functions
 from __future__ import annotations
 
 import asyncio
+from asyncio import QueueEmpty
+from os import environ
 from typing import Any
 
 import aiohttp
 from bs4 import BeautifulSoup
 
-from scrapetools import API_KEY
+API_KEY = environ["scraperapi_proxy"]
 
 
 async def fetch(
-    url: str, use_proxy: bool = True, verbose: bool = False, json:bool = False, **kwargs: Any
+    url: str,
+    verbose: bool = False,
+    json: bool = False,
+    **kwargs: Any,
 ) -> BeautifulSoup | None:
     """
     sends async requests to the given url
@@ -23,7 +28,7 @@ async def fetch(
     link = f"http://api.scraperapi.com/?api_key={API_KEY}&url={url}"
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(link) as response:
+        async with session.get(link, **kwargs) as response:
             if response.status != 200:
                 if verbose:
                     print(
@@ -41,9 +46,9 @@ async def fetch(
 
 async def fetch_many(
     urls: list[str],
-    use_proxy: bool = True,
     verbose: bool = False,
-    workers: int = 20,
+    workers: int = 25,
+    json: bool = False,
     **kwargs: int,
 ) -> list[BeautifulSoup | None]:
     """
@@ -60,16 +65,17 @@ async def fetch_many(
         We do not worry about the list 'responses' ownership since asyncio is single threaded
         """
         while True:
-            index, url = await queue.get_nowait()
-            response = await fetch(url, use_proxy=use_proxy, verbose=verbose, **kwargs)
+            try:
+                index, url = queue.get_nowait()
+            except QueueEmpty:
+                return None
+            response = await fetch(url, verbose=verbose, json=json, **kwargs)
             if response is not None:
                 responses[index] = response
             queue.task_done()
 
     tasks = [asyncio.create_task(worker(urls_queue)) for _ in range(workers)]
     await urls_queue.join()
-    for task in tasks:
-        task.cancel()
     await asyncio.gather(*tasks)
 
     return responses

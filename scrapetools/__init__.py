@@ -13,11 +13,9 @@ from __future__ import annotations
 __version__ = "0.3.1"
 __author__ = "monkeyusage"
 
-from os import environ, mkdir, path
+from os import mkdir, path
 
 from scrapetools.scrapetools import fetch, fetch_many
-
-API_KEY = environ["scraperapi_proxy"]
 
 if not path.exists("debug"):
     mkdir("debug")
