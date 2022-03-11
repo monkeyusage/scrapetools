@@ -22,14 +22,14 @@ async def test_fetch_many() -> None:
     resps = await fetch_many(
         ["https://www.google.com", "https://www.bing.com"], workers=2
     )
-    assert all([type(result) == BeautifulSoup for result in resps])
+    assert all([(type(result) == BeautifulSoup) or result is None for result in resps])
 
 
 def test_sync_fetch_many() -> None:
     resps = sync_fetch_many(
         ["https://www.google.com", "https://www.bing.com"], workers=2
     )
-    assert all([type(result) == BeautifulSoup for result in resps])
+    assert all([(type(result) == BeautifulSoup) or result is None for result in resps])
 
 
 @pytest.mark.asyncio

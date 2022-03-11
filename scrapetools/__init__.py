@@ -10,12 +10,12 @@ many options are available
 """
 from __future__ import annotations
 
+from os import mkdir, path
+
+from scrapetools.scrapetools import ScrapetoolsResult, fetch, fetch_many
+
 __version__ = "0.3.1"
 __author__ = "monkeyusage"
 
-from os import mkdir, path
-
 if not path.exists("debug"):
     mkdir("debug")
-
-from scrapetools.scrapetools import ScrapetoolsResult, fetch, fetch_many

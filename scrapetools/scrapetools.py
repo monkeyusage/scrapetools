@@ -9,6 +9,7 @@ from os import environ
 from typing import Any, TypeAlias
 
 import aiohttp
+from aiohttp import ContentTypeError
 from bs4 import BeautifulSoup
 
 ScrapetoolsResult: TypeAlias = BeautifulSoup | dict[Any, Any] | None
@@ -23,13 +24,15 @@ async def fetch(
 ) -> ScrapetoolsResult:
     """
     sends async requests to the given url
-    returns Coroutine[None, None,BeautifulSoup|None]
+    returns Coroutine[None, None,BeautifulSoup|None|dict[Any,Any]]
     """
 
-    link = f"http://api.scraperapi.com/?api_key={API_KEY}&url={url}"
+    payload = {"api_key": API_KEY, "url": url}
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(link, **kwargs) as response:
+        async with session.get(
+            "https://api.scraperapi.com", params=payload, **kwargs
+        ) as response:
             if response.status != 200:
                 if verbose:
                     print(
@@ -38,11 +41,14 @@ async def fetch(
                 return None
             if verbose:
                 print(f"Fetched for url {url} successfully!")
-            if json:
-                data: dict[Any, Any] = await response.json()
-                return data
-            html = await response.text()
-            return BeautifulSoup(html, "html.parser")
+            try:
+                if json:
+                    data: dict[Any, Any] = await response.json()
+                    return data
+                html = await response.text()
+                return BeautifulSoup(html, "html.parser")
+            except ContentTypeError:
+                return None
 
 
 async def fetch_many(
