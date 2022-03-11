@@ -6,11 +6,12 @@ from __future__ import annotations
 import asyncio
 from asyncio import QueueEmpty
 from os import environ
-from typing import Any
+from typing import Any, TypeAlias
 
 import aiohttp
 from bs4 import BeautifulSoup
 
+ScrapetoolsResult: TypeAlias = BeautifulSoup | dict[Any, Any] | None
 API_KEY = environ["scraperapi_proxy"]
 
 
@@ -19,7 +20,7 @@ async def fetch(
     verbose: bool = False,
     json: bool = False,
     **kwargs: Any,
-) -> BeautifulSoup | None:
+) -> ScrapetoolsResult:
     """
     sends async requests to the given url
     returns Coroutine[None, None,BeautifulSoup|None]
@@ -38,7 +39,7 @@ async def fetch(
             if verbose:
                 print(f"Fetched for url {url} successfully!")
             if json:
-                data = await response.json()
+                data: dict[Any, Any] = await response.json()
                 return data
             html = await response.text()
             return BeautifulSoup(html, "html.parser")
@@ -50,14 +51,14 @@ async def fetch_many(
     workers: int = 25,
     json: bool = False,
     **kwargs: int,
-) -> list[BeautifulSoup | None]:
+) -> list[ScrapetoolsResult]:
     """
     Fetches many urls using a given amount of workers and a queue to pull urls from
     """
     urls_queue: asyncio.Queue[tuple[int, str]] = asyncio.Queue()
     for idx, url in enumerate(urls):
         urls_queue.put_nowait((idx, url))
-    responses: list[BeautifulSoup | None] = [None for _ in urls]
+    responses: list[ScrapetoolsResult] = [None for _ in urls]
 
     async def worker(queue: asyncio.Queue[tuple[int, str]]) -> None:
         """

@@ -15,7 +15,7 @@ __author__ = "monkeyusage"
 
 from os import mkdir, path
 
-from scrapetools.scrapetools import fetch, fetch_many
-
 if not path.exists("debug"):
     mkdir("debug")
+
+from scrapetools.scrapetools import ScrapetoolsResult, fetch, fetch_many

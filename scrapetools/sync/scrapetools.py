@@ -6,15 +6,14 @@ from __future__ import annotations
 import asyncio
 from typing import Any
 
-from bs4 import BeautifulSoup
-
+from scrapetools.scrapetools import ScrapetoolsResult
 from scrapetools.scrapetools import fetch as async_fetch
 from scrapetools.scrapetools import fetch_many as async_fetch_many
 
 
 def fetch(
     url: str, verbose: bool = False, json: bool = False, **kwargs: Any
-) -> BeautifulSoup | None:
+) -> ScrapetoolsResult:
     """
     uses scrapetools async fetch function with asyncio.run
     checkout fetch implementation in scrapetools
@@ -24,7 +23,7 @@ def fetch(
 
 def fetch_many(
     urls: list[str], verbose: bool = False, workers: int = 25, **kwargs: Any
-) -> list[BeautifulSoup | None]:
+) -> list[ScrapetoolsResult]:
     """
     fetches url by url using the sync function
     or calls the equivalent fetch_many function in a blocking manner
